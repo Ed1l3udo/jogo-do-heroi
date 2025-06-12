@@ -6,13 +6,53 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     Rigidbody2D rb;
-    public float walkSpeed = 5f;
+    Animator animator;
+    public float walkSpeed = 1f;
     Vector2 moveInput;
-    public bool IsMoving { get; private set; }
+    public bool _isMoving = false;
+    public bool _isWalking = false;
+    public bool _isRunning = false;
+    public bool IsMoving
+    {
+        get
+        {
+            return _isMoving;
+        }
+        private set
+        {
+            _isMoving = value;
+            animator.SetBool("isMoving", value);
+        }
+    }
+    public bool isWalking
+    {
+        get
+        {
+            return _isWalking;
+        }
+        private set
+        {
+            _isWalking = value;
+            animator.SetBool("isWalking", value);
+        }
+    }
 
+    public bool isRunning
+    {
+        get
+        {
+            return _isRunning;
+        }
+        private set
+        {
+            _isRunning = value;
+            animator.SetBool("isRunning", value);
+        }
+    }
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     void Start()
@@ -23,7 +63,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
 
-        
+
     }
 
     private void FixedUpdate()
@@ -35,6 +75,17 @@ public class PlayerController : MonoBehaviour
     {
         moveInput = context.ReadValue<Vector2>();
         IsMoving = moveInput != Vector2.zero;
-        Debug.Log(moveInput);
+    }
+
+    public void OnRun(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            isRunning = true;
+        }
+        if (context.canceled)
+        {
+            isRunning = false;
+        }
     }
 }
