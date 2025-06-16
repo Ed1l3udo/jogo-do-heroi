@@ -8,10 +8,12 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D rb;
     Animator animator;
     public float walkSpeed = 1f;
+    public float runSpeed = 2f;
     Vector2 moveInput;
     public bool _isMoving = false;
     public bool _isWalking = false;
     public bool _isRunning = false;
+    public bool _isFacingRight = true;
     public bool IsMoving
     {
         get
@@ -49,6 +51,45 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("isRunning", value);
         }
     }
+
+    public bool IsFacingRight
+    {
+        get
+        {
+            return _isFacingRight;
+        }
+        set
+        {
+            if (_isFacingRight != value)
+            {
+                transform.localScale *= new Vector2(-1, 1);
+            }
+            _isFacingRight = value;
+        }
+    }
+
+    public float CurrentMoveSpeed
+    {
+        get
+        {
+            if (IsMoving)
+            {
+                if (isRunning)
+                {
+                    return runSpeed;
+                }
+                else
+                {
+                    return walkSpeed;
+                }
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        
+    }
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -68,13 +109,14 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.linearVelocity = new Vector2(moveInput.x * walkSpeed, rb.linearVelocity.y);
+        rb.linearVelocity = new Vector2(moveInput.x * CurrentMoveSpeed, rb.linearVelocity.y);
     }
 
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
         IsMoving = moveInput != Vector2.zero;
+        SetFacingDirection(moveInput);
     }
 
     public void OnRun(InputAction.CallbackContext context)
@@ -86,6 +128,18 @@ public class PlayerController : MonoBehaviour
         if (context.canceled)
         {
             isRunning = false;
+        }
+    }
+
+    public void SetFacingDirection(Vector2 moveInput)
+    {
+        if (moveInput.x > 0 && !IsFacingRight)
+        {
+            IsFacingRight = true;
+        }
+        if (moveInput.x < 0 && IsFacingRight)
+        {
+            IsFacingRight = false;
         }
     }
 }

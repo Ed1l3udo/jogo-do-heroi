@@ -6,11 +6,11 @@ public class Parallax : MonoBehaviour
 {
     public Camera cam;
     public Transform followTarget;
-    public float parallaxSpeed = 0.1f; // Fator de controle de velocidade
+    public float parallaxSpeed = 0.05f; // Fator de controle de velocidade
     Vector2 startingPosition;
     float startingZ;
     float zDistanceFromTarget => transform.position.z - followTarget.transform.position.z;
-    float clippingPlane => (cam.transform.position.z + (zDistanceFromTarget > 0 ? cam.farClipPlane : cam.nearClipPlane));
+    float clippingPlane => cam.transform.position.z + (zDistanceFromTarget > 0 ? cam.farClipPlane : cam.nearClipPlane);
     float parallaxFactor => Mathf.Abs(1 / zDistanceFromTarget) * clippingPlane * parallaxSpeed; // Multiplicando pelo parallaxSpeed
     Vector2 camMoveSinceStart => (Vector2)cam.transform.position - startingPosition;
 
