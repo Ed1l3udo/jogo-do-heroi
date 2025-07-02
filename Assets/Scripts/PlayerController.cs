@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
     Animator animator;
     public float walkSpeed = 1f;
     public float runSpeed = 2f;
+    public float jumpImpulse = 5f;
+    TouchingDirection touchingDirections;
     Vector2 moveInput;
     public bool _isMoving = false;
     public bool _isWalking = false;
@@ -38,7 +40,6 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("isWalking", value);
         }
     }
-
     public bool isRunning
     {
         get
@@ -51,7 +52,6 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("isRunning", value);
         }
     }
-
     public bool IsFacingRight
     {
         get
@@ -67,12 +67,11 @@ public class PlayerController : MonoBehaviour
             _isFacingRight = value;
         }
     }
-
     public float CurrentMoveSpeed
     {
         get
         {
-            if (IsMoving)
+            if (IsMoving && !touchingDirections.IsOnWall)
             {
                 if (isRunning)
                 {
@@ -94,22 +93,13 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-    }
-
-    void Start()
-    {
-
-    }
-
-    void Update()
-    {
-
-
+        touchingDirections = GetComponent<TouchingDirection>();
     }
 
     private void FixedUpdate()
     {
         rb.linearVelocity = new Vector2(moveInput.x * CurrentMoveSpeed, rb.linearVelocity.y);
+        animator.SetFloat("yVelocity", rb.linearVelocity.y);
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -128,6 +118,15 @@ public class PlayerController : MonoBehaviour
         if (context.canceled)
         {
             isRunning = false;
+        }
+    }
+
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (context.started && touchingDirections.IsGrounded)
+        {
+            animator.SetTrigger("jump");
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpImpulse);
         }
     }
 
