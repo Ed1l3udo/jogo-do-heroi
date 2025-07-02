@@ -41,16 +41,16 @@ public class TouchingDirection : MonoBehaviour
             animator.SetBool("isOnWall", value);
         }
     }
-    public bool _IsOnCeiling
+    public bool IsOnCeiling
     {
         get
         {
-            return __IsOnCeiling;
+            return _IsOnCeiling;
         }
         private set
-        {
-            __IsOnCeiling = value;
-            animator.SetBool("_isOnCeiling", value);
+        {   
+            _IsOnCeiling = value;
+            animator.SetBool("isOnCeiling", value);
         }
     }
     private void Awake()

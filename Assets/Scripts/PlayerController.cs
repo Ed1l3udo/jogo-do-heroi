@@ -16,6 +16,13 @@ public class PlayerController : MonoBehaviour
     public bool _isWalking = false;
     public bool _isRunning = false;
     public bool _isFacingRight = true;
+    public bool CanMove
+    {
+        get
+        {
+            return animator.GetBool("canMove");
+        }
+    }
     public bool IsMoving
     {
         get
@@ -71,21 +78,25 @@ public class PlayerController : MonoBehaviour
     {
         get
         {
-            if (IsMoving && !touchingDirections.IsOnWall)
-            {
-                if (isRunning)
-                {
-                    return runSpeed;
-                }
-                else
-                {
-                    return walkSpeed;
-                }
-            }
-            else
+            if (!CanMove)
             {
                 return 0;
             }
+            if (IsMoving && !touchingDirections.IsOnWall)
+                {
+                    if (isRunning)
+                    {
+                        return runSpeed;
+                    }
+                    else
+                    {
+                        return walkSpeed;
+                    }
+                }
+                else
+                {
+                    return 0;
+                }
         }
         
     }
@@ -123,10 +134,18 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.started && touchingDirections.IsGrounded)
+        if (context.started && touchingDirections.IsGrounded && CanMove)
         {
             animator.SetTrigger("jump");
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpImpulse);
+        }
+    }
+
+    public void OnAttack(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            animator.SetTrigger("attack");
         }
     }
 
