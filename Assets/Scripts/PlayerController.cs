@@ -116,7 +116,7 @@ public class PlayerController : MonoBehaviour
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
-        IsMoving = moveInput != Vector2.zero;
+        IsMoving = moveInput.x != 0;
         SetFacingDirection(moveInput);
     }
 
